@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: realtime-operations-api
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: realtime-operations-api } }
+  template:
+    metadata: { labels: { app: realtime-operations-api } }
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/altencirsilvajr/java-realtime-operations-projection-api:latest
+          ports: [{ containerPort: 8080 }]
+          envFrom: [{ configMapRef: { name: realtime-operations } }]
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom: { secretKeyRef: { name: realtime-operations-db, key: password } }
+          readinessProbe: { httpGet: { path: /actuator/health/readiness, port: 8080 }, initialDelaySeconds: 10 }
+          livenessProbe: { httpGet: { path: /actuator/health/liveness, port: 8080 }, initialDelaySeconds: 20 }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: 500m, memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  selector: { app: realtime-operations-api }
+  ports: [{ port: 8080, targetPort: 8080 }]

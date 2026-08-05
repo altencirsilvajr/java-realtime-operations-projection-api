@@ -1,0 +1,8 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: realtime-operations
+spec:
+  to: { kind: Service, name: realtime-operations-frontend }
+  port: { targetPort: 80 }
+  tls: { termination: edge, insecureEdgeTerminationPolicy: Redirect }

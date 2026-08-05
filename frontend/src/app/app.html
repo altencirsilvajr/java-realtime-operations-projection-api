@@ -1,0 +1,27 @@
+<main>
+  <header><p class="eyebrow">SENIOR JAVA LAB</p><h1>Realtime Operations</h1><p>PostgreSQL is the source of truth. STOMP only signals a committed snapshot.</p></header>
+  <section class="card command-bar">
+    <input #nameInput value="Import payroll" aria-label="Operation name" />
+    <button (click)="register(nameInput.value)">Register operation</button>
+    <span class="connection" [class.online]="connected()">{{ connected() ? 'STOMP connected' : 'Connecting…' }}</span>
+  </section>
+  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (snapshot(); as operation) {
+    <section class="grid">
+      <article class="card summary">
+        <p class="eyebrow">PERSISTED SNAPSHOT · V{{ operation.version }}</p><h2>{{ operation.name }}</h2>
+        <strong class="status">{{ operation.status }}</strong><code>{{ operation.id }}</code>
+        <div class="actions">
+          @if (operation.status === 'CREATED') { <button (click)="transition('PROCESSING')">Start processing</button> }
+          @if (operation.status === 'PROCESSING') { <button (click)="transition('COMPLETED')">Complete</button><button class="secondary" (click)="transition('FAILED')">Fail</button> }
+        </div>
+      </article>
+      <article class="card timeline">
+        <p class="eyebrow">ORDERED EVENT TIMELINE</p>
+        @for (event of operation.timeline; track event.sequence) {
+          <div class="event"><span>#{{ event.sequence }}</span><strong>{{ event.previousStatus || 'REGISTERED' }} → {{ event.newStatus }}</strong><time>{{ event.occurredAt | date:'medium' }}</time></div>
+        }
+      </article>
+    </section>
+  } @else { <section class="card empty">Register an operation to observe commit → projection → push.</section> }
+</main>

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: realtime-operations-frontend
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: realtime-operations-frontend } }
+  template:
+    metadata: { labels: { app: realtime-operations-frontend } }
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/altencirsilvajr/java-realtime-operations-projection-api-frontend:latest
+          ports: [{ containerPort: 80 }]
+          readinessProbe: { httpGet: { path: /, port: 80 }, initialDelaySeconds: 3 }
+          livenessProbe: { httpGet: { path: /, port: 80 }, initialDelaySeconds: 10 }
+          resources:
+            requests: { cpu: 25m, memory: 32Mi }
+            limits: { cpu: 100m, memory: 64Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: realtime-operations-frontend
+spec:
+  selector: { app: realtime-operations-frontend }
+  ports: [{ port: 80, targetPort: 80 }]
