@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: realtime-operations-projection-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/realtime_operations}
+    username: ${DATABASE_USERNAME:operations}
+    password: ${DATABASE_PASSWORD:operations}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+server:
+  shutdown: graceful
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
