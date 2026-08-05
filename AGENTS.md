@@ -8,6 +8,7 @@ This repository uses tracked development. Every substantive non-merge commit mus
 ./scripts/verify-traceability.sh
 JAVA_HOME=/opt/homebrew/opt/openjdk@21 ./mvnw verify
 PATH=/opt/homebrew/opt/node@24/bin:$PATH npm --prefix frontend ci
+PATH=/opt/homebrew/opt/node@24/bin:$PATH npm --prefix frontend run test:ci
 PATH=/opt/homebrew/opt/node@24/bin:$PATH npm --prefix frontend run build
 ```
 
